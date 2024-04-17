@@ -1,8 +1,11 @@
-let score = 0;
-const money = document.getElementById("money");
+const typeBird = {
+  blue: 0,
+  dark: 126,
+  red: 256,
+};
 
 class Bird {
-  constructor(y, speed, image, ctx, canvas) {
+  constructor(y, speed, image, ctx, canvas, life, type, gift) {
     this.posX = 0;
     this.posY = y;
     this.speed = speed;
@@ -13,14 +16,18 @@ class Bird {
     this.width = 45;
     this.height = 35;
     this.isAlive = true;
+    this.life = life;
+    this.type = type;
+    this.isSniper = false;
+    this.gift = gift;
     this.initFrameCycle();
   }
 
   initFrameCycle() {
     const interval = setInterval(() => {
       if (this.isAlive) {
-        this.frame++;
-        if (this.frame >= 3) {
+        this.frame += 40;
+        if (this.frame >= 120) {
           this.frame = 0;
         }
       } else {
@@ -39,7 +46,7 @@ class Bird {
 
       this.ctx.drawImage(
         this.image,
-        this.frame * 40,
+        this.frame + this.type,
         2 * 60,
         35,
         30,
@@ -54,25 +61,30 @@ class Bird {
   }
 
   isClicked(x, y) {
-    // console.log({ x, y });
-    // console.log(`posX = ${this.posX} et posY = ${this.posY}`);
-    return (
+    if (
       x >= this.posX &&
       x <= this.posX + this.width &&
       y >= this.posY &&
       y <= this.posY + this.height
-    );
+    ) {
+      this.life--;
+      if (this.life == 0 || this.isSniper) {
+        this.isAlive = false;
+      }
+      return true;
+    }
+    return false;
   }
 
   deadAnimation() {
-    this.posY += this.speed * 3;
+    this.posY += 5;
     if (this.posY > this.canvas.height) {
       this.isAlive = false;
     }
 
     this.ctx.drawImage(
       this.image,
-      this.frame * 40,
+      this.type,
       4 * 60,
       35,
       30,
@@ -84,6 +96,30 @@ class Bird {
   }
 }
 
+//Variable Globale
+let score = 0;
+let birds = [];
+let isActiveSniper = false;
+
+//Elements DOM
+const money = document.getElementById("money");
+const prices = document.querySelectorAll("#price");
+const sniper = document.getElementById("sniper");
+
+//verif enought money
+const isMoney = (money) => {
+  prices.forEach((price) => {
+    if (price.innerHTML > money) {
+      price.style.color = "red";
+    } else {
+      price.style.color = "black";
+    }
+  });
+};
+
+isMoney(score);
+
+// Config canvas
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
@@ -95,9 +131,38 @@ window.addEventListener("resize", function () {
   canvas.height = canvas.offsetHeight;
 });
 
-const dunkImage = new Image();
-dunkImage.src = "./assets/img/sprite1.png";
+//Gestion item
 
+sniper.addEventListener("click", () => {
+  if (score >= 20) {
+    score -= 20;
+    money.innerHTML = score;
+    const progress = document.createElement("progress");
+    progress.setAttribute("id", "file");
+    progress.setAttribute("max", "10");
+    progress.setAttribute("value", "10");
+    progress.className = "progress";
+    sniper.prepend(progress);
+    let time = 10;
+    let interval = setInterval(() => {
+      if (time >= 0) {
+        isActiveSniper = true;
+        progress.setAttribute("value", `${time}`);
+      } else {
+        isActiveSniper = false;
+        progress.remove();
+        clearInterval(interval);
+      }
+      time--;
+    }, 1000);
+  }
+});
+
+//Initialisation de l'image
+const duckImage = new Image();
+duckImage.src = "./assets/img/sprite1.png";
+
+//Tirre
 function getMousePos(canvas, event) {
   let rect = canvas.getBoundingClientRect();
   return {
@@ -109,37 +174,43 @@ function getMousePos(canvas, event) {
 canvas.addEventListener("click", function (event) {
   let mousePos = getMousePos(canvas, event);
   birds.forEach((bird) => {
+    if (isActiveSniper) bird.isSniper = true;
+    else bird.isSniper = false;
     if (bird.isClicked(mousePos.x, mousePos.y)) {
-      score++;
-      money.innerHTML = score;
-      bird.isAlive = false;
-      console.log(score);
+      if (!bird.isAlive) {
+        score += bird.gift;
+        isMoney(score);
+        money.innerHTML = score;
+      }
     }
   });
 });
 
-let birds = [];
+// Generer aleatoirement oiseaux
 
-function addBirdRandomly() {
-  if (birds.length < 3) {
-    const randomHeight = Math.random() * canvas.height - 70;
-    birds.push(new Bird(randomHeight, 1, dunkImage, ctx, canvas));
-    setTimeout(addBirdRandomly, 2000);
-  }
+function getRandomArbitrary(min, max) {
+  return Math.random() * (max - min) + min;
 }
 
-dunkImage.onload = () => {
-  setTimeout(addBirdRandomly, 0); // Start adding birds immediately
+function addBirdRandomly() {
+  let randomHeight = getRandomArbitrary(0, canvas.height - 70);
+  birds.push(
+    new Bird(randomHeight, 1, duckImage, ctx, canvas, 3, typeBird.dark, 3)
+  );
+  randomHeight = getRandomArbitrary(0, canvas.height - 70);
+  birds.push(
+    new Bird(randomHeight, 1, duckImage, ctx, canvas, 1, typeBird.blue, 1)
+  );
+  randomHeight = getRandomArbitrary(0, canvas.height - 70);
+  birds.push(
+    new Bird(randomHeight, 1, duckImage, ctx, canvas, 2, typeBird.red, 2)
+  );
+  // console.log(birds);
+  setTimeout(addBirdRandomly, 2000);
+}
 
-  setInterval(() => {
-    birds.push(
-      new Bird(Math.random() * canvas.height, 1, dunkImage, ctx, canvas)
-    );
-    birds.push(
-      new Bird(Math.random() * canvas.height, 1, dunkImage, ctx, canvas)
-    );
-  }, 2000); // Add two birds after 10 seconds
-
+duckImage.onload = () => {
+  addBirdRandomly();
   const animate = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     birds.forEach((bird) => bird.update());

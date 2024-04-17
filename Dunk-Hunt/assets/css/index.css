@@ -4,8 +4,10 @@
   background-image: url(../img/Home.webp);
   background-size: cover;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 1rem;
 }
 
 .btn__start {
