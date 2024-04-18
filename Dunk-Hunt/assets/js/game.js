@@ -191,20 +191,6 @@ let isPaused = false;
 let isSlowMotion = false; // Variable to track slow motion state
 let slowMotionEndTime = 0; // Variable to store the end time of slow motion
 
-canvas.addEventListener("click", function (event) {
-  let mousePos = getMousePos(canvas, event);
-  birds.forEach((bird) => {
-    if (isActiveSniper) bird.isSniper = true;
-    else bird.isSniper = false;
-    if (bird.isClicked(mousePos.x, mousePos.y)) {
-      if (!bird.isAlive) {
-        totalMoney += bird.gift;
-        isMoney(totalMoney);
-        money.innerHTML = totalMoney;
-      }
-    }
-  });
-});
 function handleKeyDown(event) {
   switch (event.key) {
     case "Escape":
@@ -232,6 +218,26 @@ function handleKeyDown(event) {
       break;
   }
 }
+
+canvas.addEventListener("click", function (event) {
+  if (isPaused) {
+    return;
+  } else {
+    let mousePos = getMousePos(canvas, event);
+    birds.forEach((bird) => {
+      if (isActiveSniper) bird.isSniper = true;
+      else bird.isSniper = false;
+      if (bird.isClicked(mousePos.x, mousePos.y)) {
+        if (!bird.isAlive) {
+          totalMoney += bird.gift;
+          isMoney(totalMoney);
+          money.innerHTML = totalMoney;
+        }
+      }
+    });
+  }
+});
+
 document.addEventListener("keydown", handleKeyDown);
 
 // Generer aleatoirement oiseaux
