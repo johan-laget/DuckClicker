@@ -20,6 +20,7 @@ class Bird {
     this.type = type;
     this.isSniper = false;
     this.gift = gift;
+    this.isSurvivor = false;
     this.initFrameCycle();
   }
 
@@ -41,7 +42,7 @@ class Bird {
     if (this.isAlive) {
       this.posX += this.speed;
       if (this.posX > this.canvas.width) {
-        this.posX = -10;
+        this.isSurvivor = true;
       }
 
       this.ctx.drawImage(
@@ -79,7 +80,7 @@ class Bird {
   deadAnimation() {
     this.posY += 5;
     if (this.posY > this.canvas.height) {
-      this.isAlive = false;
+      this.isSurvivor = true;
     }
 
     this.ctx.drawImage(
@@ -97,7 +98,21 @@ class Bird {
 }
 
 //Variable Globale
-let score = 0;
+const infoBirds = {
+  birdPassed: 0,
+  birdTotal: 0,
+  nbBirdRed: 0,
+  nbBirdBlue: 0,
+  nbBirdDark: 0,
+};
+
+const attacksActive = {
+  isActiveSniper: false,
+  isActiveHurican: false,
+  isActiveBombe: false,
+};
+
+let totalMoney = 0;
 let birds = [];
 let isActiveSniper = false;
 
@@ -117,7 +132,7 @@ const isMoney = (money) => {
   });
 };
 
-isMoney(score);
+isMoney(totalMoney);
 
 // Config canvas
 const canvas = document.getElementById("gameCanvas");
@@ -134,9 +149,10 @@ window.addEventListener("resize", function () {
 //Gestion item
 
 sniper.addEventListener("click", () => {
-  if (score >= 20) {
-    score -= 20;
-    money.innerHTML = score;
+  if (isActiveSniper) return;
+  if (totalMoney >= 20) {
+    totalMoney -= 20;
+    money.innerHTML = totalMoney;
     const progress = document.createElement("progress");
     progress.setAttribute("id", "file");
     progress.setAttribute("max", "10");
@@ -178,9 +194,9 @@ canvas.addEventListener("click", function (event) {
     else bird.isSniper = false;
     if (bird.isClicked(mousePos.x, mousePos.y)) {
       if (!bird.isAlive) {
-        score += bird.gift;
-        isMoney(score);
-        money.innerHTML = score;
+        totalMoney += bird.gift;
+        isMoney(totalMoney);
+        money.innerHTML = totalMoney;
       }
     }
   });
@@ -209,11 +225,19 @@ function addBirdRandomly() {
   setTimeout(addBirdRandomly, 2000);
 }
 
+const cleanBirds = () => {
+  birds = birds.filter((bird) => bird.isSurvivor === false);
+  console.log(birds);
+};
+
 duckImage.onload = () => {
   addBirdRandomly();
   const animate = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    birds.forEach((bird) => bird.update());
+    birds.forEach((bird) => {
+      bird.update();
+      cleanBirds();
+    });
     requestAnimationFrame(animate);
   };
 
