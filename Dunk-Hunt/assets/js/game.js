@@ -187,6 +187,10 @@ function getMousePos(canvas, event) {
   };
 }
 
+let isPaused = false;
+let isSlowMotion = false; // Variable to track slow motion state
+let slowMotionEndTime = 0; // Variable to store the end time of slow motion
+
 canvas.addEventListener("click", function (event) {
   let mousePos = getMousePos(canvas, event);
   birds.forEach((bird) => {
@@ -201,6 +205,34 @@ canvas.addEventListener("click", function (event) {
     }
   });
 });
+function handleKeyDown(event) {
+  switch (event.key) {
+    case "Escape":
+      isPaused = !isPaused;
+      if (isPaused) {
+        console.log("pause");
+        // Show Pause background and stop music
+      } else {
+        console.log("resume");
+      }
+      break;
+    case "Shift":
+      if (!isSlowMotion) {
+        isSlowMotion = true;
+        birds.forEach((bird) => {
+          bird.speed /= 2; // Reduce bird speed by half
+        });
+        setTimeout(() => {
+          isSlowMotion = false;
+          birds.forEach((bird) => {
+            bird.speed *= 2; // Restore bird speed to normal
+          });
+        }, 20000); // 20 seconds
+      }
+      break;
+  }
+}
+document.addEventListener("keydown", handleKeyDown);
 
 // Generer aleatoirement oiseaux
 
@@ -209,35 +241,51 @@ function getRandomArbitrary(min, max) {
 }
 
 function addBirdRandomly() {
-  let randomHeight = getRandomArbitrary(0, canvas.height - 70);
-  birds.push(
-    new Bird(randomHeight, 1, duckImage, ctx, canvas, 3, typeBird.dark, 3)
-  );
-  randomHeight = getRandomArbitrary(0, canvas.height - 70);
-  birds.push(
-    new Bird(randomHeight, 1, duckImage, ctx, canvas, 1, typeBird.blue, 1)
-  );
-  randomHeight = getRandomArbitrary(0, canvas.height - 70);
-  birds.push(
-    new Bird(randomHeight, 1, duckImage, ctx, canvas, 2, typeBird.red, 2)
-  );
+  if (isSlowMotion) {
+    let randomHeight = getRandomArbitrary(0, canvas.height - 70);
+    birds.push(
+      new Bird(randomHeight, 0.5, duckImage, ctx, canvas, 3, typeBird.dark, 3)
+    );
+    randomHeight = getRandomArbitrary(0, canvas.height - 70);
+    birds.push(
+      new Bird(randomHeight, 0.5, duckImage, ctx, canvas, 1, typeBird.blue, 1)
+    );
+    randomHeight = getRandomArbitrary(0, canvas.height - 70);
+    birds.push(
+      new Bird(randomHeight, 0.5, duckImage, ctx, canvas, 2, typeBird.red, 2)
+    );
+  } else {
+    let randomHeight = getRandomArbitrary(0, canvas.height - 70);
+    birds.push(
+      new Bird(randomHeight, 1, duckImage, ctx, canvas, 3, typeBird.dark, 3)
+    );
+    randomHeight = getRandomArbitrary(0, canvas.height - 70);
+    birds.push(
+      new Bird(randomHeight, 1, duckImage, ctx, canvas, 1, typeBird.blue, 1)
+    );
+    randomHeight = getRandomArbitrary(0, canvas.height - 70);
+    birds.push(
+      new Bird(randomHeight, 1, duckImage, ctx, canvas, 2, typeBird.red, 2)
+    );
+  }
   // console.log(birds);
   setTimeout(addBirdRandomly, 2000);
 }
 
 const cleanBirds = () => {
   birds = birds.filter((bird) => bird.isSurvivor === false);
-  console.log(birds);
 };
 
 duckImage.onload = () => {
   addBirdRandomly();
   const animate = () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    birds.forEach((bird) => {
-      bird.update();
-      cleanBirds();
-    });
+    if (!isPaused) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      birds.forEach((bird) => {
+        bird.update();
+        cleanBirds();
+      });
+    }
     requestAnimationFrame(animate);
   };
 
