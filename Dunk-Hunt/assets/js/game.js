@@ -131,17 +131,6 @@ function addBirdRandomly() {
 }
 
 dunkImage.onload = () => {
-  setTimeout(addBirdRandomly, 0); // Start adding birds immediately
-
-  setInterval(() => {
-    birds.push(
-      new Bird(Math.random() * canvas.height, 1, dunkImage, ctx, canvas)
-    );
-    birds.push(
-      new Bird(Math.random() * canvas.height, 1, dunkImage, ctx, canvas)
-    );
-  }, 2000); // Add two birds after 10 seconds
-
   let isPaused = false;
   let isSlowMotion = false; // Variable to track slow motion state
   let slowMotionEndTime = 0; // Variable to store the end time of slow motion
@@ -176,6 +165,24 @@ dunkImage.onload = () => {
         }
     }
   }
+  setTimeout(addBirdRandomly, 0); // Start adding birds immediately
+
+  setInterval(() => {
+    if (isSlowMotion) {
+      birds.push(
+        new Bird(Math.random() * canvas.height, 0.5, dunkImage, ctx, canvas)
+      );
+      birds.push(
+        new Bird(Math.random() * canvas.height, 0.5, dunkImage, ctx, canvas)
+      );
+    }
+    birds.push(
+      new Bird(Math.random() * canvas.height, 1, dunkImage, ctx, canvas)
+    );
+    birds.push(
+      new Bird(Math.random() * canvas.height, 1, dunkImage, ctx, canvas)
+    );
+  }, 2000); // Add two birds after 10 seconds
 
   document.addEventListener("keydown", handleKeyDown);
 
