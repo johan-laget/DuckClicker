@@ -106,7 +106,7 @@ function getMousePos(canvas, event) {
   };
 }
 
-canvas.addEventListener("click", function (event) {
+function handleClick(event) {
   let mousePos = getMousePos(canvas, event);
   birds.forEach((bird) => {
     if (bird.isClicked(mousePos.x, mousePos.y)) {
@@ -116,7 +116,9 @@ canvas.addEventListener("click", function (event) {
       console.log(score);
     }
   });
-});
+}
+
+canvas.addEventListener("click", handleClick);
 
 let birds = [];
 
@@ -140,10 +142,50 @@ dunkImage.onload = () => {
     );
   }, 2000); // Add two birds after 10 seconds
 
+  let isPaused = false;
+  let isSlowMotion = false; // Variable to track slow motion state
+  let slowMotionEndTime = 0; // Variable to store the end time of slow motion
+
+  // Function to handle pause, slow mo
+  function handleKeyDown(event) {
+    switch (event.key) {
+      case "Escape":
+        isPaused = !isPaused;
+        if (isPaused) {
+          canvas.removeEventListener("click", handleClick); // deactivate click
+          // Show Pause background and stop music
+          cancelAnimationFrame(animationID);
+        } else {
+          canvas.addEventListener("click", handleClick); // Reactivate click
+          // Reactivate music
+          animate();
+        }
+      case "Shift":
+        if (!isSlowMotion) {
+          isSlowMotion = true;
+          slowMotionEndTime = Date.now() + 20000; // 20 seconds
+          birds.forEach((bird) => {
+            bird.speed /= 2; // Reduce bird speed by half
+          });
+          setTimeout(() => {
+            isSlowMotion = false;
+            birds.forEach((bird) => {
+              bird.speed *= 2; // Restore bird speed to normal
+            });
+          }, 20000); // 20 seconds
+        }
+    }
+  }
+
+  document.addEventListener("keydown", handleKeyDown);
+
+  let animationID;
   const animate = () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    birds.forEach((bird) => bird.update());
-    requestAnimationFrame(animate);
+    if (!isPaused) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      birds.forEach((bird) => bird.update());
+      animationID = requestAnimationFrame(animate); // Store animation frame ID
+    }
   };
 
   animate();
