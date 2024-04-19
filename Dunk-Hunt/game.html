@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- IMPORTS ICONS-->
-
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
     <!-- CSS -->
     <link rel="stylesheet" href="./assets/css/styles.css" />
     <link rel="stylesheet" href="./assets/css/game.css" />
@@ -23,40 +23,58 @@
                 <img class="money__img" src="./assets/img/money.png" alt="">
                 <p class="money__nb" id="money">0</p>
             </div>
+            <div class="shop__duck">
+                <img class="duck__img" src="./assets/img/duck.png" alt="">
+                <p class="money__nb" id="duck"><span id="duck-killed"></span>/<span id="duck-total"></span></p>
+            </div>
         </div>
-        <div class="shop__list">
-            <div class="shop__item">
-                <div class="item__description">
-                    <p>Bombe</p>
+        <div class="shop__content">
+            <div class="shop__header">
+                <div class="shop__refresh" id="refresh-item">
+                    <div class="icon__refresh">
+                        <i class="ri-refresh-fill"></i>
+                    </div>
                     <div class="item__price">
                         <img src="./assets/img/money.png" alt="">
                         <p class="item__price" id="price">50</p>
                     </div>
                 </div>
-                <img class="item__img" src="./assets/img/bombe.png" alt="">
             </div>
-            <div class="shop__item" id="sniper">
-                <div class="item__description" id="sniper-description">
-                    <p>Sniper</p>
-                    <div class="item__price">
-                        <img src="./assets/img/money.png" alt="">
-                        <p class="item__price" id="price">20</p>
+            <div class="shop__list">
+                <div class="shop__item" id="bombe">
+                    <div class="item__description">
+                        <p>Bombe</p>
+                        <div class="item__price">
+                            <img src="./assets/img/money.png" alt="">
+                            <p class="item__price" id="price">50</p>
+                        </div>
                     </div>
+                    <img class="item__img" src="./assets/img/bombe.png" alt="">
                 </div>
-                <img class="item__img" src="./assets/img/sniper.png" alt="">
-            </div>
-            <div class="shop__item">
-                <div class="item__description">
-                    <p>Tempete</p>
-                    <div class="item__price">
-                        <img src="./assets/img/money.png" alt="">
-                        <p class="item__price" id="price">35</p>
+                <div class="shop__item" id="sniper">
+                    <div class="item__description" id="sniper-description">
+                        <p>Sniper</p>
+                        <div class="item__price">
+                            <img src="./assets/img/money.png" alt="">
+                            <p class="item__price" id="price">20</p>
+                        </div>
                     </div>
+                    <img class="item__img" src="./assets/img/sniper.png" alt="">
                 </div>
-                <img class="item__img" src="./assets/img/tempete.png" alt="">
+                <div class="shop__item" id="hurican">
+                    <div class="item__description">
+                        <p>Tempete</p>
+                        <div class="item__price">
+                            <img src="./assets/img/money.png" alt="">
+                            <p class="item__price" id="price">35</p>
+                        </div>
+                    </div>
+                    <img class="item__img" src="./assets/img/tempete.png" alt="">
+                </div>
             </div>
         </div>
     </div>
+    <div class="zone__style" id="zone"></div>
     <!-- JS -->
     <script src="./assets/js/main.js"></script>
     <script src="./assets/js/game.js"></script>

@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap");
 .main {
   width: 100%;
   height: 100vh;
@@ -5,14 +6,91 @@
   background-size: cover;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  gap: 1rem;
 }
 
 .btn__start {
-  padding: 2rem 2rem;
-  background-color: red;
+  margin-top: 2rem;
+  padding: 1rem 1rem;
+  background-image: url(../img/fond-bois.jpeg);
+  border-radius: 9%;
+}
+
+.bouton-jouer {
+  position: relative;
+  font-family: "MedievalSharp", cursive;
+  font-style: normal;
+  top: 32px;
+  font-size: 23px;
+}
+.bouton_index {
+  text-decoration: none;
+  display: grid;
+  justify-content: center;
   color: white;
-  border-radius: 50%;
+  background-image: url(../img/bois.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 259px;
+  height: 87px;
+  margin: 9px;
+  cursor: pointer;
+}
+
+.bouton_index:hover {
+  transform: scale(1.1);
+}
+
+.title {
+  margin-top: 4rem;
+}
+
+.title__img {
+  width: 500px;
+}
+
+/* .title {
+  text-align: center;
+  margin-bottom: 0rem;
+  background: url(../img/background_title.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: 175px;
+  width: 37rem;
+  position: absolute;
+  top: 2rem;
+  left: 25rem;
+} */
+
+.parametre {
+  bottom: 30px;
+  right: 40px;
+  position: absolute;
+  background: url(../img/fond-bois.jpeg);
+  border-radius: 20%;
+  text-align: center;
+  padding-right: 20px;
+  padding-left: 20px;
+  padding-bottom: 14px;
+  padding-top: 11px;
+}
+
+.bouton_parametre {
+  background-image: url(../img/bois.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  display: block;
+  width: 190px;
+  font-family: "MedievalSharp", cursive;
+  font-style: normal;
+  color: #ffff;
+  font-size: 20px;
+  text-align: center;
+  padding: 20px;
+  cursor: pointer;
+}
+
+.bouton_parametre:hover {
+  transform: scale(1.1);
 }
