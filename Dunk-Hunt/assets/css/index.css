@@ -1,0 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
+/* body,
+a:-webkit-any-link  {
+  cursor: url('../css/viseur5.png'), auto;
+} */
+a.bouton_index {
+  cursor: url('../css/viseur5.png') !important;
+}
+
+.main {
+  width: 100%;
+  height: 100vh;
+  background-image: url(../img/Home.webp);
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+.btn__start {
+  padding: 1rem 1rem;
+  background-image: url(../img/fond-bois.jpeg);
+  border-radius: 9%;
+  margin: 4rem;
+  margin-top: 140px;
+}
+
+.bouton-jouer {
+
+    position: relative;
+    font-family: "MedievalSharp", cursive;
+    font-style: normal;
+    top: 32px;
+    font-size: 23px;
+}
+.bouton_index {
+
+  text-decoration: none;
+  display: grid;
+  justify-content: center;
+  color: white;
+  background: url(../img/bouton_noir.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 259px;
+  height: 87px;
+  margin: 9px;;
+  border-radius: 20px;
+  
+}
+
+.bouton_index:hover {
+  transform: scale(1.1);
+  
+}
+.title {
+  text-align: center;
+    margin-bottom: 0rem;
+    background: url(../img/background_title.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 175px;
+    width: 37rem;
+    position: absolute;
+    top: 2rem;
+    left: 25rem;
+}
+.container {
+  margin-top: 5rem;
+}
+
+.parametre {
+  bottom: 30px;
+  right: 40px;
+  position: absolute;
+  background: url(../img/fond-bois.jpeg);
+  border-radius: 10%;
+  text-align: center;
+  padding-right: 15px;
+  padding-left: 15px;
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
+.bouton_parametre{
+  background: url(../img/bouton_noir.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  display: block;
+  width: 190px;
+  font-family: "MedievalSharp", cursive;
+  font-style: normal;
+  color: #ffff;
+  font-size: 20px;
+  text-align: center;
+  padding: 20px;
+  border-radius: 20px;
+}
+
+.bouton_parametre:hover {
+  transform: scale(1.1);
+}
+
+#interfaceparametre {
+  display: none;
+  position: absolute;
+  width: 13.5rem;
+  height: 13rem;
+  bottom: 6.3rem;
+  right: 0rem;
+  background: url(../img/fond-bois.jpeg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  border-radius: 35px;
+}
+
+.bouton_interface {
+  background: url(../img/bouton_noir.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  font-family: "MedievalSharp", cursive;
+  color: #ffff;
+  font-size: 20px;
+  margin: 20px;
+  padding: 1rem;
+  border-radius: 20px;
+  display: block;
+}
+
+.text_interface{
+  top: 21px;
+
+    right: 60px;
+    position: absolute;
+}
+
+.bouton_interface:hover {
+  transform: scale(1.1);
+}
+.titre_1 {
+  top: 7px;
+  font-size: 24px;
+  position: relative;
+  font-family: "MedievalSharp", cursive;
+  font-style: normal;
+  color: black;
+  font-weight: bold;
+}
+
