@@ -98,6 +98,7 @@ class Bird {
 }
 
 //Variable Globale
+// Make an active to save game !!!
 const infoBirds = {
   birdPassed: 0,
   birdTotal: 0,
@@ -105,13 +106,13 @@ const infoBirds = {
   nbBirdBlue: 0,
   nbBirdDark: 0,
 };
-
+// do we save the attack ???
 const attacksActive = {
   isActiveSniper: false,
   isActiveHurican: false,
   isActiveBombe: false,
 };
-
+// Save totalMoney and birds
 let totalMoney = 0;
 let birds = [];
 let isActiveSniper = false;
@@ -121,7 +122,7 @@ const money = document.getElementById("money");
 const prices = document.querySelectorAll("#price");
 const sniper = document.getElementById("sniper");
 
-//verif enought money
+//verif enough money
 const isMoney = (money) => {
   prices.forEach((price) => {
     if (price.innerHTML > money) {
@@ -133,7 +134,27 @@ const isMoney = (money) => {
 };
 
 isMoney(totalMoney);
+function saveMoneyToLocalStorage() {
+  localStorage.setItem("totalMoney", totalMoney.toString());
+}
 
+// Function to load total money from local storage
+function loadMoneyFromLocalStorage() {
+  const savedMoney = localStorage.getItem("totalMoney");
+  if (savedMoney !== null) {
+    totalMoney = parseInt(savedMoney);
+    money.innerHTML = totalMoney;
+    isMoney(totalMoney); // Update price display colors based on available money
+  }
+}
+
+// Update total money and save to local storage
+function updateTotalMoney(amount) {
+  totalMoney += amount;
+  money.innerHTML = totalMoney;
+  saveMoneyToLocalStorage();
+  isMoney(totalMoney); // Update price display colors based on available money
+}
 // Config canvas
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
@@ -151,7 +172,7 @@ window.addEventListener("resize", function () {
 sniper.addEventListener("click", () => {
   if (isActiveSniper) return;
   if (totalMoney >= 20) {
-    totalMoney -= 20;
+    updateTotalMoney(-20);
     money.innerHTML = totalMoney;
     const progress = document.createElement("progress");
     progress.setAttribute("id", "file");
@@ -174,6 +195,13 @@ sniper.addEventListener("click", () => {
   }
 });
 
+function handleBirdClick(bird) {
+  if (!bird.isAlive) {
+    updateTotalMoney(bird.gift);
+  }
+}
+
+loadMoneyFromLocalStorage();
 //Initialisation de l'image
 const duckImage = new Image();
 duckImage.src = "./assets/img/sprite1.png";
@@ -197,7 +225,6 @@ function handleKeyDown(event) {
       isPaused = !isPaused;
       if (isPaused) {
         console.log("pause");
-        // Show Pause background and stop music
       } else {
         console.log("resume");
       }
@@ -206,12 +233,12 @@ function handleKeyDown(event) {
       if (!isSlowMotion) {
         isSlowMotion = true;
         birds.forEach((bird) => {
-          bird.speed /= 2; // Reduce bird speed by half
+          bird.speed /= 2;
         });
         setTimeout(() => {
           isSlowMotion = false;
           birds.forEach((bird) => {
-            bird.speed *= 2; // Restore bird speed to normal
+            bird.speed *= 2;
           });
         }, 20000); // 20 seconds
       }
@@ -229,7 +256,7 @@ canvas.addEventListener("click", function (event) {
       else bird.isSniper = false;
       if (bird.isClicked(mousePos.x, mousePos.y)) {
         if (!bird.isAlive) {
-          totalMoney += bird.gift;
+          updateTotalMoney(bird.gift);
           isMoney(totalMoney);
           money.innerHTML = totalMoney;
         }
