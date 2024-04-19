@@ -19,6 +19,8 @@ class Bird {
     this.life = life;
     this.type = type;
     this.isSniper = false;
+    this.isBombe = false;
+    this.isHurican = false;
     this.gift = gift;
     this.isSurvivor = false;
     this.initFrameCycle();
@@ -40,7 +42,7 @@ class Bird {
 
   update() {
     if (this.isAlive) {
-      this.posX += this.speed;
+      this.posX += this.isHurican ? this.speed / 2 : this.speed;
       if (this.posX > this.canvas.width) {
         this.isSurvivor = true;
       }
@@ -62,7 +64,13 @@ class Bird {
   }
 
   isClicked(x, y) {
-    if (
+    const distance = Math.sqrt(
+      Math.pow(x - (this.posX + this.width / 2), 2) +
+        Math.pow(y - (this.posY + this.height / 2), 2)
+    );
+    if (this.isBombe && distance <= 150) {
+      this.isAlive = false;
+    } else if (
       x >= this.posX &&
       x <= this.posX + this.width &&
       y >= this.posY &&
@@ -99,7 +107,7 @@ class Bird {
 
 //Variable Globale
 const infoBirds = {
-  birdPassed: 0,
+  birdKilled: 0,
   birdTotal: 0,
   nbBirdRed: 0,
   nbBirdBlue: 0,
@@ -114,12 +122,17 @@ const attacksActive = {
 
 let totalMoney = 0;
 let birds = [];
-let isActiveSniper = false;
 
 //Elements DOM
+const zone = document.getElementById("zone");
 const money = document.getElementById("money");
 const prices = document.querySelectorAll("#price");
+const totalDuck = document.querySelector("#duck-total");
+const killedDuck = document.querySelector("#duck-killed");
 const sniper = document.getElementById("sniper");
+const bombe = document.getElementById("bombe");
+const hurican = document.getElementById("hurican");
+killedDuck.innerHTML = 0;
 
 //verif enought money
 const isMoney = (money) => {
@@ -148,24 +161,69 @@ window.addEventListener("resize", function () {
 
 //Gestion item
 
+const createProgress = (max, value) => {
+  const progress = document.createElement("progress");
+  progress.setAttribute("id", "file");
+  progress.setAttribute("max", max);
+  progress.setAttribute("value", value);
+  progress.className = "progress";
+  return progress;
+};
+
 sniper.addEventListener("click", () => {
-  if (isActiveSniper) return;
+  if (attacksActive.isActiveSniper) return;
   if (totalMoney >= 20) {
     totalMoney -= 20;
     money.innerHTML = totalMoney;
-    const progress = document.createElement("progress");
-    progress.setAttribute("id", "file");
-    progress.setAttribute("max", "10");
-    progress.setAttribute("value", "10");
-    progress.className = "progress";
+    const progress = createProgress(10, 10);
     sniper.prepend(progress);
     let time = 10;
     let interval = setInterval(() => {
       if (time >= 0) {
-        isActiveSniper = true;
+        attacksActive.isActiveSniper = true;
         progress.setAttribute("value", `${time}`);
       } else {
-        isActiveSniper = false;
+        attacksActive.isActiveSniper = false;
+        progress.remove();
+        clearInterval(interval);
+      }
+      time--;
+    }, 1000);
+  }
+});
+
+const activeZone = () => {
+  zone.style.display = "block";
+  canvas.addEventListener("mousemove", (e) => {
+    zone.style.left = e.clientX + "px";
+    zone.style.top = e.clientY + "px";
+  });
+};
+
+bombe.addEventListener("click", () => {
+  if (attacksActive.isActiveBombe) return;
+  if (totalMoney >= 50) {
+    totalMoney -= 50;
+    money.innerHTML = totalMoney;
+    attacksActive.isActiveBombe = true;
+    activeZone();
+  }
+});
+
+hurican.addEventListener("click", () => {
+  if (attacksActive.isActiveHurican) return;
+  if (totalMoney >= 35) {
+    totalMoney -= 35;
+    money.innerHTML = totalMoney;
+    const progress = createProgress(25, 25);
+    hurican.prepend(progress);
+    let time = 25;
+    let interval = setInterval(() => {
+      if (time >= 0) {
+        attacksActive.isActiveHurican = true;
+        progress.setAttribute("value", `${time}`);
+      } else {
+        attacksActive.isActiveHurican = false;
         progress.remove();
         clearInterval(interval);
       }
@@ -187,58 +245,22 @@ function getMousePos(canvas, event) {
   };
 }
 
-let isPaused = false;
-let isSlowMotion = false; // Variable to track slow motion state
-let slowMotionEndTime = 0; // Variable to store the end time of slow motion
-
-function handleKeyDown(event) {
-  switch (event.key) {
-    case "Escape":
-      isPaused = !isPaused;
-      if (isPaused) {
-        console.log("pause");
-        // Show Pause background and stop music
-      } else {
-        console.log("resume");
-      }
-      break;
-    case "Shift":
-      if (!isSlowMotion) {
-        isSlowMotion = true;
-        birds.forEach((bird) => {
-          bird.speed /= 2; // Reduce bird speed by half
-        });
-        setTimeout(() => {
-          isSlowMotion = false;
-          birds.forEach((bird) => {
-            bird.speed *= 2; // Restore bird speed to normal
-          });
-        }, 20000); // 20 seconds
-      }
-      break;
-  }
-}
-
 canvas.addEventListener("click", function (event) {
-  if (isPaused) {
-    return;
-  } else {
-    let mousePos = getMousePos(canvas, event);
-    birds.forEach((bird) => {
-      if (isActiveSniper) bird.isSniper = true;
-      else bird.isSniper = false;
-      if (bird.isClicked(mousePos.x, mousePos.y)) {
-        if (!bird.isAlive) {
-          totalMoney += bird.gift;
-          isMoney(totalMoney);
-          money.innerHTML = totalMoney;
-        }
+  zone.style.display = "none";
+  attacksActive.isActiveBombe = false;
+  let mousePos = getMousePos(canvas, event);
+  birds.forEach((bird) => {
+    if (bird.isClicked(mousePos.x, mousePos.y)) {
+      if (!bird.isAlive) {
+        totalMoney += bird.gift;
+        infoBirds.birdKilled++;
+        killedDuck.innerHTML = infoBirds.birdKilled;
+        isMoney(totalMoney);
+        money.innerHTML = totalMoney;
       }
-    });
-  }
+    }
+  });
 });
-
-document.addEventListener("keydown", handleKeyDown);
 
 // Generer aleatoirement oiseaux
 
@@ -247,33 +269,20 @@ function getRandomArbitrary(min, max) {
 }
 
 function addBirdRandomly() {
-  if (isSlowMotion) {
-    let randomHeight = getRandomArbitrary(0, canvas.height - 70);
-    birds.push(
-      new Bird(randomHeight, 0.5, duckImage, ctx, canvas, 3, typeBird.dark, 3)
-    );
-    randomHeight = getRandomArbitrary(0, canvas.height - 70);
-    birds.push(
-      new Bird(randomHeight, 0.5, duckImage, ctx, canvas, 1, typeBird.blue, 1)
-    );
-    randomHeight = getRandomArbitrary(0, canvas.height - 70);
-    birds.push(
-      new Bird(randomHeight, 0.5, duckImage, ctx, canvas, 2, typeBird.red, 2)
-    );
-  } else {
-    let randomHeight = getRandomArbitrary(0, canvas.height - 70);
-    birds.push(
-      new Bird(randomHeight, 1, duckImage, ctx, canvas, 3, typeBird.dark, 3)
-    );
-    randomHeight = getRandomArbitrary(0, canvas.height - 70);
-    birds.push(
-      new Bird(randomHeight, 1, duckImage, ctx, canvas, 1, typeBird.blue, 1)
-    );
-    randomHeight = getRandomArbitrary(0, canvas.height - 70);
-    birds.push(
-      new Bird(randomHeight, 1, duckImage, ctx, canvas, 2, typeBird.red, 2)
-    );
-  }
+  let randomHeight = getRandomArbitrary(0, canvas.height - 70);
+  birds.push(
+    new Bird(randomHeight, 1, duckImage, ctx, canvas, 3, typeBird.dark, 3)
+  );
+  randomHeight = getRandomArbitrary(0, canvas.height - 70);
+  birds.push(
+    new Bird(randomHeight, 1, duckImage, ctx, canvas, 1, typeBird.blue, 1)
+  );
+  randomHeight = getRandomArbitrary(0, canvas.height - 70);
+  birds.push(
+    new Bird(randomHeight, 1, duckImage, ctx, canvas, 2, typeBird.red, 2)
+  );
+  infoBirds.birdTotal += 3;
+  totalDuck.innerHTML = infoBirds.birdTotal;
   // console.log(birds);
   setTimeout(addBirdRandomly, 2000);
 }
@@ -285,13 +294,14 @@ const cleanBirds = () => {
 duckImage.onload = () => {
   addBirdRandomly();
   const animate = () => {
-    if (!isPaused) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      birds.forEach((bird) => {
-        bird.update();
-        cleanBirds();
-      });
-    }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    birds.forEach((bird) => {
+      bird.isSniper = attacksActive.isActiveSniper;
+      bird.isBombe = attacksActive.isActiveBombe;
+      bird.isHurican = attacksActive.isActiveHurican;
+      bird.update();
+      cleanBirds();
+    });
     requestAnimationFrame(animate);
   };
 

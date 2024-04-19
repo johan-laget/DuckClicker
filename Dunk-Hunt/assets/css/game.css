@@ -7,28 +7,40 @@
   background-repeat: no-repeat;
 }
 
+.zone__style {
+  display: none;
+  pointer-events: none;
+  position: fixed;
+  width: 300px;
+  height: 300px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background-color: rgba(206, 42, 42, 0.603);
+}
+
 .shop {
+  margin-top: -4px;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
-  margin-top: -4px;
   z-index: -1;
   height: 20vh;
   width: 100%;
-  /* background-color: #f6a370; */
   background-image: url(../img/fond-bois.jpeg);
   background-size: cover;
   background-repeat: no-repeat;
   padding: 1rem;
 }
 
-.shop__money {
+.shop__money,
+.shop__duck {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
 
-.money__img {
+.money__img,
+.duck__img {
   width: 50px;
 }
 
@@ -37,15 +49,28 @@
   color: white;
 }
 
+.shop__refresh {
+  display: flex;
+  justify-content: end;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.icon__refresh {
+  background-color: black;
+  padding: 5px;
+  color: white;
+}
+
 .shop__list {
   display: flex;
 }
 
 .shop__item {
+  padding: 1.5rem;
   position: relative;
   display: flex;
   justify-content: space-between;
-  padding: 2rem;
   background-image: url(../img/bois.png);
   background-repeat: no-repeat;
   background-size: cover;
@@ -72,6 +97,11 @@
 
 .item__price img {
   width: 24px;
+}
+
+.item__img {
+  width: 50px;
+  height: 50px;
 }
 
 .progress {
