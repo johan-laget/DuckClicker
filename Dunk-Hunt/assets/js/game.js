@@ -18,6 +18,7 @@ class Bird {
     this.isAlive = true;
     this.life = life;
     this.type = type;
+    this.isLaser = false;
     this.isSniper = false;
     this.isBombe = false;
     this.isHurican = false;
@@ -64,28 +65,46 @@ class Bird {
   }
 
   isClicked(x, y) {
-    const distance = Math.sqrt(
-      Math.pow(x - (this.posX + this.width / 2), 2) +
-        Math.pow(y - (this.posY + this.height / 2), 2)
-    );
-    if (this.isBombe && distance <= 150) {
+    if (this.isLaser) {
+      // If the laser is active, the bird dies immediately on mouseover
       this.isAlive = false;
-    } else if (
-      x >= this.posX &&
-      x <= this.posX + this.width &&
-      y >= this.posY &&
-      y <= this.posY + this.height
-    ) {
-      this.life--;
-      if (this.life == 0 || this.isSniper) {
+      return true; // Indicate that the bird was clicked (even though it was killed by the laser)
+    } else {
+      const distance = Math.sqrt(
+        Math.pow(x - (this.posX + this.width / 2), 2) +
+          Math.pow(y - (this.posY + this.height / 2), 2)
+      );
+      if (this.isBombe && distance <= 150) {
         this.isAlive = false;
+      } else if (
+        x >= this.posX &&
+        x <= this.posX + this.width &&
+        y >= this.posY &&
+        y <= this.posY + this.height
+      ) {
+        this.life--;
+        if (this.life == 0 || this.isSniper) {
+          this.isAlive = false;
+        }
+        return true;
       }
-      return true;
     }
     return false;
   }
 
   deadAnimation() {
+    if (this.isLaser) {
+      // Draw laser effect
+      this.ctx.beginPath();
+      this.ctx.strokeStyle = "red";
+      this.ctx.lineWidth = 3;
+      this.ctx.moveTo(this.posX + this.width / 2, this.posY + this.height / 2);
+      this.ctx.lineTo(
+        this.posX + this.width / 2 + 25,
+        this.posY + this.height / 2 + 25
+      );
+      this.ctx.stroke();
+    }
     this.posY += 5;
     if (this.posY > this.canvas.height) {
       this.isSurvivor = true;
@@ -115,6 +134,7 @@ const attacksActive = {
   isActiveSniper: false,
   isActiveHurican: false,
   isActiveBombe: false,
+  isActiveLaser: false,
 };
 
 let isPaused = false;
@@ -127,6 +147,7 @@ const money = document.getElementById("money");
 const prices = document.querySelectorAll("#price");
 const totalDuck = document.querySelector("#duck-total");
 const killedDuck = document.querySelector("#duck-killed");
+const laser = document.getElementById("laser");
 const sniper = document.getElementById("sniper");
 const bombe = document.getElementById("bombe");
 const hurican = document.getElementById("hurican");
@@ -221,6 +242,28 @@ sniper.addEventListener("click", () => {
         progress.setAttribute("value", `${time}`);
       } else {
         attacksActive.isActiveSniper = false;
+        progress.remove();
+        clearInterval(interval);
+      }
+      time--;
+    }, 1000);
+  }
+});
+laser.addEventListener("click", () => {
+  if (attacksActive.isActiveLaser) return;
+  if (totalMoney >= 75) {
+    totalMoney -= 75;
+    saveDataToLStorage();
+    money.innerHTML = totalMoney;
+    const progress = createProgress(10, 10);
+    laser.prepend(progress);
+    let time = 10;
+    let interval = setInterval(() => {
+      if (time >= 0) {
+        attacksActive.isActiveLaser = true;
+        progress.setAttribute("value", `${time}`);
+      } else {
+        attacksActive.isActiveLaser = false;
         progress.remove();
         clearInterval(interval);
       }
@@ -341,6 +384,7 @@ duckImage.onload = () => {
     if (!isPaused) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       birds.forEach((bird) => {
+        bird.isLaser = attacksActive.isActiveLaser;
         bird.isSniper = attacksActive.isActiveSniper;
         bird.isBombe = attacksActive.isActiveBombe;
         bird.isHurican = attacksActive.isActiveHurican;
