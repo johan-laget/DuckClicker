@@ -106,21 +106,18 @@ class Bird {
 }
 
 //Variable Globale
-// Make an active to save game !!!
-const infoBirds = {
+let infoBirds = {
   birdKilled: 0,
   birdTotal: 0,
-  nbBirdRed: 0,
-  nbBirdBlue: 0,
-  nbBirdDark: 0,
 };
-// do we save the attack ???
+
 const attacksActive = {
   isActiveSniper: false,
   isActiveHurican: false,
   isActiveBombe: false,
 };
-// Save totalMoney and birds
+
+let isPaused = false;
 let totalMoney = 0;
 let birds = [];
 
@@ -135,7 +132,13 @@ const bombe = document.getElementById("bombe");
 const hurican = document.getElementById("hurican");
 killedDuck.innerHTML = 0;
 
-//verif enough money
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    isPaused = !isPaused;
+  }
+});
+
+//verif enought money
 const isMoney = (money) => {
   prices.forEach((price) => {
     if (price.innerHTML > money) {
@@ -147,27 +150,7 @@ const isMoney = (money) => {
 };
 
 isMoney(totalMoney);
-function saveMoneyToLocalStorage() {
-  localStorage.setItem("totalMoney", totalMoney.toString());
-}
 
-// Function to load total money from local storage
-function loadMoneyFromLocalStorage() {
-  const savedMoney = localStorage.getItem("totalMoney");
-  if (savedMoney !== null) {
-    totalMoney = parseInt(savedMoney);
-    money.innerHTML = totalMoney;
-    isMoney(totalMoney); // Update price display colors based on available money
-  }
-}
-
-// Update total money and save to local storage
-function updateTotalMoney(amount) {
-  totalMoney += amount;
-  money.innerHTML = totalMoney;
-  saveMoneyToLocalStorage();
-  isMoney(totalMoney); // Update price display colors based on available money
-}
 // Config canvas
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
@@ -194,7 +177,7 @@ const createProgress = (max, value) => {
 sniper.addEventListener("click", () => {
   if (attacksActive.isActiveSniper) return;
   if (totalMoney >= 20) {
-    updateTotalMoney(-20);
+    totalMoney -= 20;
     money.innerHTML = totalMoney;
     const progress = createProgress(10, 10);
     sniper.prepend(progress);
@@ -267,6 +250,9 @@ function getMousePos(canvas, event) {
 }
 
 canvas.addEventListener("click", function (event) {
+  if (isPaused) {
+    return;
+  }
   zone.style.display = "none";
   attacksActive.isActiveBombe = false;
   let mousePos = getMousePos(canvas, event);
@@ -290,21 +276,22 @@ function getRandomArbitrary(min, max) {
 }
 
 function addBirdRandomly() {
-  let randomHeight = getRandomArbitrary(0, canvas.height - 70);
-  birds.push(
-    new Bird(randomHeight, 1, duckImage, ctx, canvas, 3, typeBird.dark, 3)
-  );
-  randomHeight = getRandomArbitrary(0, canvas.height - 70);
-  birds.push(
-    new Bird(randomHeight, 1, duckImage, ctx, canvas, 1, typeBird.blue, 1)
-  );
-  randomHeight = getRandomArbitrary(0, canvas.height - 70);
-  birds.push(
-    new Bird(randomHeight, 1, duckImage, ctx, canvas, 2, typeBird.red, 2)
-  );
-  infoBirds.birdTotal += 3;
-  totalDuck.innerHTML = infoBirds.birdTotal;
-  // console.log(birds);
+  if (!isPaused) {
+    let randomHeight = getRandomArbitrary(0, canvas.height - 70);
+    birds.push(
+      new Bird(randomHeight, 1, duckImage, ctx, canvas, 3, typeBird.dark, 3)
+    );
+    randomHeight = getRandomArbitrary(0, canvas.height - 70);
+    birds.push(
+      new Bird(randomHeight, 1, duckImage, ctx, canvas, 1, typeBird.blue, 1)
+    );
+    randomHeight = getRandomArbitrary(0, canvas.height - 70);
+    birds.push(
+      new Bird(randomHeight, 1, duckImage, ctx, canvas, 2, typeBird.red, 2)
+    );
+    infoBirds.birdTotal += 3;
+    totalDuck.innerHTML = infoBirds.birdTotal;
+  }
   setTimeout(addBirdRandomly, 2000);
 }
 
@@ -315,15 +302,21 @@ const cleanBirds = () => {
 duckImage.onload = () => {
   addBirdRandomly();
   const animate = () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    birds.forEach((bird) => {
-      bird.isSniper = attacksActive.isActiveSniper;
-      bird.isBombe = attacksActive.isActiveBombe;
-      bird.isHurican = attacksActive.isActiveHurican;
-      bird.update();
-      cleanBirds();
-    });
-    requestAnimationFrame(animate);
+    if (!isPaused) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      birds.forEach((bird) => {
+        bird.isSniper = attacksActive.isActiveSniper;
+        bird.isBombe = attacksActive.isActiveBombe;
+        bird.isHurican = attacksActive.isActiveHurican;
+        bird.update();
+        cleanBirds();
+      });
+      requestAnimationFrame(animate);
+    } else {
+      // If the game is paused, don't proceed with the animation loop
+      // Instead, wait for the game to be unpaused
+      requestAnimationFrame(animate);
+    }
   };
 
   animate();
