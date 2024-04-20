@@ -132,6 +132,38 @@ const bombe = document.getElementById("bombe");
 const hurican = document.getElementById("hurican");
 killedDuck.innerHTML = 0;
 
+//Save and Load part of the App
+function saveDataToLStorage() {
+  localStorage.setItem("money", totalMoney);
+  localStorage.setItem("birdKilled", infoBirds.birdKilled);
+  localStorage.setItem("birdTotal", infoBirds.birdTotal);
+}
+function loadGold() {
+  const savedGold = localStorage.getItem("money");
+  if (savedGold !== null) {
+    totalMoney = parseInt(savedGold);
+    money.innerHTML = totalMoney;
+  }
+}
+function loadBirdKilled() {
+  const savedData = localStorage.getItem("birdKilled");
+  if (savedData !== null) {
+    infoBirds.birdKilled = parseInt(savedData);
+    killedDuck.innerHTML = infoBirds.birdKilled;
+  }
+}
+function loadBirdTotal() {
+  const savedData = localStorage.getItem("birdTotal");
+  if (savedData !== null) {
+    infoBirds.birdTotal = parseInt(savedData);
+    totalDuck.innerHTML = infoBirds.birdTotal;
+  }
+}
+loadGold();
+loadBirdKilled();
+loadBirdTotal();
+
+//Pause trigger
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     isPaused = !isPaused;
@@ -178,6 +210,7 @@ sniper.addEventListener("click", () => {
   if (attacksActive.isActiveSniper) return;
   if (totalMoney >= 20) {
     totalMoney -= 20;
+    saveDataToLStorage();
     money.innerHTML = totalMoney;
     const progress = createProgress(10, 10);
     sniper.prepend(progress);
@@ -208,6 +241,7 @@ bombe.addEventListener("click", () => {
   if (attacksActive.isActiveBombe) return;
   if (totalMoney >= 50) {
     totalMoney -= 50;
+    saveDataToLStorage();
     money.innerHTML = totalMoney;
     attacksActive.isActiveBombe = true;
     activeZone();
@@ -218,6 +252,7 @@ hurican.addEventListener("click", () => {
   if (attacksActive.isActiveHurican) return;
   if (totalMoney >= 35) {
     totalMoney -= 35;
+    saveDataToLStorage();
     money.innerHTML = totalMoney;
     const progress = createProgress(25, 25);
     hurican.prepend(progress);
@@ -262,6 +297,7 @@ canvas.addEventListener("click", function (event) {
         totalMoney += bird.gift;
         infoBirds.birdKilled++;
         killedDuck.innerHTML = infoBirds.birdKilled;
+        saveDataToLStorage();
         isMoney(totalMoney);
         money.innerHTML = totalMoney;
       }
@@ -318,6 +354,5 @@ duckImage.onload = () => {
       requestAnimationFrame(animate);
     }
   };
-
   animate();
 };
