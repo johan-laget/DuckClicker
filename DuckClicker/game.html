@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- IMPORTS ICONS-->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+    <!-- CSS -->
+    <link rel="stylesheet" href="./assets/css/styles.css" />
+    <link rel="stylesheet" href="./assets/css/game.css" />
+
+    <title>Document</title>
+</head>
+
+<body>
+    <audio id="audioPlayer" autoplay loop src="./assets/audio/music.mp3"></audio>
+    <canvas id="gameCanvas"></canvas>
+    <div class="shop">
+        <div class="shop__info">
+            <div class="shop__money">
+                <img class="money__img" src="./assets/img/money.png" alt="">
+                <p class="money__nb" id="money">0</p>
+            </div>
+            <div class="shop__duck">
+                <img class="duck__img" src="./assets/img/duck.png" alt="">
+                <p class="money__nb" id="duck"><span id="duck-killed"></span>/<span id="duck-total"></span></p>
+            </div>
+        </div>
+        <div class="shop__content">
+            <div class="shop__header">
+                <div class="shop__refresh" id="refresh-item">
+                    <div class="icon__refresh">
+                        <i class="ri-refresh-fill"></i>
+                    </div>
+                    <div class="item__price">
+                        <img src="./assets/img/money.png" alt="">
+                        <p class="item__price" id="price">50</p>
+                    </div>
+                </div>
+                <div class="parametre">
+                    <bouton id="boutonparametre" class="bouton_parametre">Menu</bouton>
+
+                    <div id="interfaceparametre">
+                        <p class="titre_1">Paramètre</p>
+                        <a href="./index.html" class="bouton_interface">Home</a>
+                        <bouton id="Boutonpause" class="bouton_interface">Pause</bouton>
+                        <bouton id="changeCursorBtn" class="bouton_interface">Viseur</bouton>
+                        <bouton id="toggleSoundButton" class="bouton_interface">Couper le son</bouton>
+                    </div>
+                </div>
+            </div>
+            <div class="shop__list">
+                <div class="shop__item" id="laser">
+                    <div class="item__description">
+                        <p>NUKE</p>
+                        <div class="item__price">
+                            <img src="./assets/img/money.png" alt="">
+                            <p class="item__price" id="price">200</p>
+                        </div>
+                    </div>
+                    <img class="item__img" src="./assets/img/nuk.png" alt="">
+                </div>
+                <div class="shop__item" id="bombe">
+                    <div class="item__description">
+                        <p>Bombe</p>
+                        <div class="item__price">
+                            <img src="./assets/img/money.png" alt="">
+                            <p class="item__price" id="price">50</p>
+                        </div>
+                    </div>
+                    <img class="item__img" src="./assets/img/bombe.png" alt="">
+                </div>
+                <div class="shop__item" id="sniper">
+                    <div class="item__description" id="sniper-description">
+                        <p>Sniper</p>
+                        <div class="item__price">
+                            <img src="./assets/img/money.png" alt="">
+                            <p class="item__price" id="price">20</p>
+                        </div>
+                    </div>
+                    <img class="item__img" src="./assets/img/sniper.png" alt="">
+                </div>
+                <div class="shop__item" id="hurican">
+                    <div class="item__description">
+                        <p>Tempete</p>
+                        <div class="item__price">
+                            <img src="./assets/img/money.png" alt="">
+                            <p class="item__price" id="price">35</p>
+                        </div>
+                    </div>
+                    <img class="item__img" src="./assets/img/tempete.png" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="zone__style" id="zone"></div>
+    <!-- JS -->
+    <script src="./assets/js/main.js"></script>
+    <script src="./assets/js/game.js"></script>
+    <script src="./assets/js/viseur.js"></script>
+</body>
+
+</html>
