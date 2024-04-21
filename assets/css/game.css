@@ -1,5 +1,4 @@
 #gameCanvas {
-  cursor: url("vir.png") 20 20, pointer;
   width: 100%;
   height: 80vh;
   background-image: url(../img/fond.webp);
@@ -20,7 +19,6 @@
 
 .shop {
   margin-top: -4px;
-  cursor: pointer;
   display: flex;
   justify-content: space-between;
   z-index: -1;
@@ -143,7 +141,7 @@
   text-align: center;
   position: absolute;
   width: 11rem;
-  height: 9.3rem;
+  height: 11.3rem;
   left: 0rem;
   bottom: 9rem;
   background: url(../img/fond-bois.jpeg);

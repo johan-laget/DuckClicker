@@ -15,7 +15,7 @@
 </head>
 
 <body>
-    <audio id="audioPlayer" autoplay loop src="./assets/audio/music.mp3" muted></audio>
+    <audio id="audioPlayer" autoplay loop src="./assets/audio/music.mp3"></audio>
     <canvas id="gameCanvas"></canvas>
     <div class="shop">
         <div class="shop__info">
@@ -33,8 +33,9 @@
                 <div id="interfaceparametre">
                     <p class="titre_1">Paramètre</p>
                     <a href="./index.html" class="bouton_interface">Home</a>
+                    <bouton id="Boutonpause" class="bouton_interface">Pause</bouton>
                     <bouton id="changeCursorBtn" class="bouton_interface">Viseur</bouton>
-                    <bouton id="boutonmusique" class="bouton_interface">Musique</bouton>
+                    <bouton id="toggleSoundButton" class="bouton_interface">Couper le son</bouton>
                 </div>
             </div>
         </div>
@@ -98,6 +99,7 @@
     <!-- JS -->
     <script src="./assets/js/main.js"></script>
     <script src="./assets/js/game.js"></script>
+    <script src="./assets/js/viseur.js"></script>
 </body>
 
 </html>
